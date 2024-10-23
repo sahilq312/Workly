@@ -16,20 +16,14 @@ import (
 	"github.com/sahilq312/workly/routes"
 )
 
-// init function runs before main, used for initialization
 func init() {
-	// Load environment variables
 	initializer.LoadEnvVariale()
-	// Connect to PostgreSQL database
 	initializer.ConnectPostgresDatabase()
 }
 
-// main function is the entry point of the application
 func main() {
-	// Create a new Gin router with default middleware
 	r := gin.New()
 
-	// Define a route for the root path
 	r.GET("/", func(c *gin.Context) {
 		c.JSON(200, gin.H{
 			"message": "Welcome to Workly",
@@ -41,13 +35,11 @@ func main() {
 		})
 	})
 
-	// Set up routes for authentication, posts, and companies
 	routes.AuthRoutes(r)
 	routes.PostRoutes(r)
 	routes.CompanyRoutes(r)
 	routes.UserRoutes(r)
 	routes.JobRoutes(r)
-	// Create a new HTTP server
 	srv := &http.Server{
 		Addr:    ":" + os.Getenv("PORT"),
 		Handler: r,

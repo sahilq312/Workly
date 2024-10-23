@@ -2,20 +2,21 @@ package controller // Package declaration
 
 import ( // Importing necessary packages
 	"net/http" // For handling HTTP requests
-	"github.com/gin-gonic/gin" // For creating web applications
+
+	"github.com/gin-gonic/gin"                // For creating web applications
 	"github.com/sahilq312/workly/initializer" // For initializing the application
-	"github.com/sahilq312/workly/model" // For defining the data model
+	"github.com/sahilq312/workly/model"       // For defining the data model
 )
 
 func CreateJob(c *gin.Context) { // Function to create a new job
 	// Get request body
 	var body struct { // Define the structure of the request body
-		Title       string   `json:"title"` // Title of the job
+		Title       string   `json:"title"`       // Title of the job
 		Description string   `json:"description"` // Description of the job
-		Location    string   `json:"location"` // Location of the job
-		Salary      string   `json:"salary"` // Salary of the job (as a string)
-		CompanyID   uint     `json:"company_id"` // ID of the company that posted the job
-		Skills      []string `json:"skills"` // Array of skills required for the job
+		Location    string   `json:"location"`    // Location of the job
+		Salary      string   `json:"salary"`      // Salary of the job (as a string)
+		CompanyID   uint     `json:"company_id"`  // ID of the company that posted the job
+		Skills      []string `json:"skills"`      // Array of skills required for the job
 	}
 
 	// Bind JSON and check for errors
@@ -36,15 +37,15 @@ func CreateJob(c *gin.Context) { // Function to create a new job
 
 	// Create the job entry
 	job := model.Job{ // Create a new job instance
-		Title:       body.Title, // Set the title of the job
+		Title:       body.Title,       // Set the title of the job
 		Description: body.Description, // Set the description of the job
-		Location:    body.Location, // Set the location of the job
-		Salary:      body.Salary, // Set the salary of the job
-		CompanyID:   body.CompanyID, // Set the company ID of the job
-		Skills:      body.Skills, // Set the skills required for the job
+		Location:    body.Location,    // Set the location of the job
+		Salary:      body.Salary,      // Set the salary of the job
+		CompanyID:   body.CompanyID,   // Set the company ID of the job
+		Skills:      body.Skills,      // Set the skills required for the job
 	}
 	result := initializer.DB.Create(&job) // Save the job to the database
-	if result.Error != nil { // If there's an error while saving the job
+	if result.Error != nil {              // If there's an error while saving the job
 		c.JSON(http.StatusInternalServerError, gin.H{ // Return a server error response
 			"error": "Failed to create job", // Error message
 		})
@@ -54,7 +55,7 @@ func CreateJob(c *gin.Context) { // Function to create a new job
 	// Return the created job
 	c.JSON(http.StatusOK, gin.H{ // If the job is created successfully, return a success response
 		"message": "Job created successfully", // Success message
-		"job":     job, // The created job
+		"job":     job,                        // The created job
 	})
 }
 
@@ -70,16 +71,16 @@ func GetJob(c *gin.Context) { // Function to get a job
 func UpdateJob(c *gin.Context) { // Function to update a job
 	// Get job
 	var body struct { // Define the structure of the request body
-		Title       string // Title of the job
-		Description string // Description of the job
+		Title       string   // Title of the job
+		Description string   // Description of the job
 		Skills      []string // Array of skills required for the job
-		Location    string // Location of the job
-		Salary      string // Salary of the job
-		CompanyId   string // ID of the company that posted the job
-		jobId       string // ID of the job to be updated
+		Location    string   // Location of the job
+		Salary      string   // Salary of the job
+		CompanyId   string   // ID of the company that posted the job
+		jobId       string   // ID of the job to be updated
 	}
 	err := c.BindJSON(&body) // Bind the request body to the defined structure
-	if err != nil { // If there's an error while binding the request body
+	if err != nil {          // If there's an error while binding the request body
 		c.JSON(http.StatusBadRequest, gin.H{ // Return a bad request response
 			"error": "Invalid request body", // Error message
 		})
@@ -100,7 +101,7 @@ func DeleteJob(c *gin.Context) { // Function to delete a job
 		jobId string // ID of the job to be deleted
 	}
 	err := c.BindHeader(&body) // Bind the request header to the defined structure
-	if err != nil { // If there's an error while binding the request header
+	if err != nil {            // If there's an error while binding the request header
 		c.JSON(http.StatusBadRequest, gin.H{ // Return a bad request response
 			"error": "Invalid request body", // Error message
 		})
@@ -116,12 +117,12 @@ func DeleteJob(c *gin.Context) { // Function to delete a job
 
 func GetAllJobs(c *gin.Context) { // Function to get all jobs
 	// Get all jobs
-	jobs := []model.Job{} // Get all jobs from the database
+	jobs := []model.Job{}      // Get all jobs from the database
 	initializer.DB.Find(&jobs) // Find all jobs in the database
 	// Return all jobs
 	c.JSON(http.StatusOK, gin.H{ // Return all the jobs
 		"message": "Jobs fetched successfully", // Success message
-		"jobs":    jobs, // The fetched jobs
+		"jobs":    jobs,                        // The fetched jobs
 	})
 }
 
@@ -130,19 +131,19 @@ func GetJobsByCompany(c *gin.Context) { // Function to get jobs by company
 		companyId string // ID of the company to get jobs for
 	}
 	err := c.BindHeader(&body) // Bind the request header to the defined structure
-	if err != nil { // If there's an error while binding the request header
+	if err != nil {            // If there's an error while binding the request header
 		c.JSON(http.StatusBadRequest, gin.H{ // Return a bad request response
 			"error": "Invalid request body", // Error message
 		})
 		return
 	}
 	// Get jobs by company
-	jobs := []model.Job{} // Get all jobs from the database
+	jobs := []model.Job{}                                              // Get all jobs from the database
 	initializer.DB.Where("company_id = ?", body.companyId).Find(&jobs) // Find all jobs in the database for the specified company
 	// Return jobs by company
 	c.JSON(http.StatusOK, gin.H{ // Return all the jobs for the specified company
 		"message": "Jobs fetched successfully", // Success message
-		"jobs":    jobs, // The fetched jobs
+		"jobs":    jobs,                        // The fetched jobs
 	})
 }
 func GetJobsByLocation(c *gin.Context) { // Function to get jobs by location
@@ -151,7 +152,7 @@ func GetJobsByLocation(c *gin.Context) { // Function to get jobs by location
 		Location string `json:"location"` // Location to get jobs for
 	}
 	err := c.BindJSON(&body) // Bind the request body to the defined structure
-	if err != nil { // If there's an error while binding the request body
+	if err != nil {          // If there's an error while binding the request body
 		c.JSON(http.StatusBadRequest, gin.H{ // Return a bad request response
 			"error": "Invalid request body", // Error message
 		})
@@ -159,14 +160,9 @@ func GetJobsByLocation(c *gin.Context) { // Function to get jobs by location
 	}
 
 	// Return jobs by location
-	jobs := []model.Job{} // Get all jobs from the database
+	jobs := []model.Job{}                                           // Get all jobs from the database
 	initializer.DB.Where("location = ?", body.Location).Find(&jobs) // Find all jobs in the database for the specified location
-	if err != nil { // If there's an error while fetching the jobs
-		c.JSON(http.StatusBadRequest, gin.H{ // Return a bad request response
-			"error": "Invalid request body", // Error message
-		})
-		return
-	}
+
 	if len(jobs) == 0 { // If no jobs are found for the specified location
 		c.JSON(http.StatusNotFound, gin.H{ // Return a not found response
 			"error": "No jobs found", // Error message
@@ -175,7 +171,7 @@ func GetJobsByLocation(c *gin.Context) { // Function to get jobs by location
 	}
 	c.JSON(http.StatusOK, gin.H{ // Return all the jobs for the specified location
 		"message": "Jobs fetched successfully", // Success message
-		"jobs":    jobs, // The fetched jobs
+		"jobs":    jobs,                        // The fetched jobs
 	})
 }
 
@@ -185,20 +181,15 @@ func GetJobsBySkill(c *gin.Context) { // Function to get jobs by skill
 		Skill string `json:"skill"` // Skill to get jobs for
 	}
 	err := c.BindJSON(&body) // Bind the request body to the defined structure
-	if err != nil { // If there's an error while binding the request body
+	if err != nil {          // If there's an error while binding the request body
 		c.JSON(http.StatusBadRequest, gin.H{ // Return a bad request response
 			"error": "Invalid request body", // Error message
 		})
 		return
 	}
-	jobs := []model.Job{} // Get all jobs from the database
+	jobs := []model.Job{}                                                 // Get all jobs from the database
 	initializer.DB.Where("skills LIKE ?", "%"+body.Skill+"%").Find(&jobs) // Find all jobs in the database that require the specified skill
-	if err != nil { // If there's an error while fetching the jobs
-		c.JSON(http.StatusBadRequest, gin.H{ // Return a bad request response
-			"error": "Invalid request body", // Error message
-		})
-		return
-	}
+
 	if len(jobs) == 0 { // If no jobs are found for the specified skill
 		c.JSON(http.StatusNotFound, gin.H{ // Return a not found response
 			"error": "No jobs found", // Error message
@@ -207,6 +198,6 @@ func GetJobsBySkill(c *gin.Context) { // Function to get jobs by skill
 	}
 	c.JSON(http.StatusOK, gin.H{ // Return all the jobs for the specified skill
 		"message": "Jobs fetched successfully", // Success message
-		"jobs":    jobs, // The fetched jobs
+		"jobs":    jobs,                        // The fetched jobs
 	})
 }

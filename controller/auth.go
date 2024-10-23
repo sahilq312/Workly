@@ -35,7 +35,6 @@ func Login(c *gin.Context) {
 		c.JSON(400, gin.H{"error": "Invalid password"})
 		return
 	}
-
 	// Return user details
 	c.JSON(200, gin.H{
 		"user": user,
@@ -58,8 +57,8 @@ func Register(c *gin.Context) {
 
 	//Check if user already exist
 	userExist := model.User{Email: body.Email}
-	initializer.DB.First(&userExist)
-	if userExist.ID != 0 {
+	result := initializer.DB.Where(&userExist).First(&userExist)
+	if result.Error == nil {
 		c.JSON(400, gin.H{
 			"error": "User already exist",
 		})
@@ -77,14 +76,15 @@ func Register(c *gin.Context) {
 
 	//Create a new user
 	user := model.User{Name: body.Name, Email: body.Email, Password: hashedPassword}
-	result := initializer.DB.Create(&user)
+	result = initializer.DB.Create(&user)
 
 	if result.Error != nil {
 		c.JSON(400, gin.H{
 			"error": "Error in creating the user",
 		})
+		return
 	}
-	//set Session
+
 	//Return User and session
 	c.JSON(200, gin.H{
 		"user": user,
